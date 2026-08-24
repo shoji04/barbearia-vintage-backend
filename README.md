@@ -8,6 +8,16 @@ a cada novo agendamento.
 **Deploy:** https://barbearia-vintage-backend.onrender.com
 **Repositório do frontend:** https://github.com/shoji04/barbearia-vintage-frontend
 
+## Como testar
+
+Já existe uma conta cadastrada para avaliação, com as seguintes credenciais:
+
+- **Email:** avaliador@insperjr.com
+- **Senha:** avaliador123
+
+Alternativamente, é possível criar uma nova conta pela página de Cadastro
+usando o código de funcionário `barbearia300`.
+
 ## Contexto do case
 
 A Barbearia Vintage é uma barbearia de bairro que controlava os agendamentos
