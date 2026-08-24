@@ -23,7 +23,11 @@ from database import db, Cliente, Agendamento, Funcionario
 app = Flask(__name__)
 
 # --- Configurações ---
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///barbearia.db"
+# Em produção (Render) usa DATABASE_URL (Postgres); localmente cai pro SQLite.
+database_url = os.environ.get("DATABASE_URL", "sqlite:///barbearia.db")
+if database_url.startswith("postgresql://"):
+    database_url = database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "troque-essa-chave-no-env")
 
 N8N_WEBHOOK_URL = os.environ.get("N8N_WEBHOOK_URL", "http://localhost:5678/webhook/novo-agendamento")
