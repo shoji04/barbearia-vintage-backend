@@ -72,6 +72,7 @@ class Agendamento(db.Model):
             "horario",
             unique=True,
             sqlite_where=db.text("status != 'cancelado'"),
+            postgresql_where=db.text("status != 'cancelado'"),
         ),
     )
 

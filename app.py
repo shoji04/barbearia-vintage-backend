@@ -25,7 +25,9 @@ app = Flask(__name__)
 # --- Configurações ---
 # Em produção (Render) usa DATABASE_URL (Postgres); localmente cai pro SQLite.
 database_url = os.environ.get("DATABASE_URL", "sqlite:///barbearia.db")
-if database_url.startswith("postgresql://"):
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql+psycopg://", 1)
+elif database_url.startswith("postgresql://"):
     database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "troque-essa-chave-no-env")
@@ -142,6 +144,11 @@ def editar_cliente(cliente_id):
     if not dados:
         return jsonify({"erro": "Corpo da requisição deve ser um JSON válido"}), 400
 
+    if "nome" in dados and not dados["nome"]:
+        return jsonify({"erro": "nome não pode ser vazio"}), 400
+    if "email" in dados and not dados["email"]:
+        return jsonify({"erro": "email não pode ser vazio"}), 400
+
     cliente.nome = dados.get("nome", cliente.nome)
     cliente.email = dados.get("email", cliente.email)
     cliente.observacoes = dados.get("observacoes", cliente.observacoes)
@@ -256,6 +263,8 @@ def editar_agendamento(agendamento_id):
         return jsonify({"erro": "'data' deve ser AAAA-MM-DD e 'horario' deve ser HH:MM"}), 400
 
     if "servico" in dados:
+        if not dados["servico"]:
+            return jsonify({"erro": "servico não pode ser vazio"}), 400
         agendamento.servico = dados["servico"]
     if "status" in dados:
         status_validos = ["agendado", "concluido", "cancelado", "nao_compareceu"]
