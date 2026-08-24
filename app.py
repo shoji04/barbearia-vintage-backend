@@ -26,7 +26,7 @@ app = Flask(__name__)
 # Em produção (Render) usa DATABASE_URL (Postgres); localmente cai pro SQLite.
 database_url = os.environ.get("DATABASE_URL", "sqlite:///barbearia.db")
 if database_url.startswith("postgresql://"):
-    database_url = database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+    database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "troque-essa-chave-no-env")
 
