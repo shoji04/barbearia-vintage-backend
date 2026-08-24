@@ -31,7 +31,9 @@ CODIGO_FUNCIONARIO = os.environ.get("CODIGO_FUNCIONARIO", "barbearia300")
 
 db.init_app(app)
 jwt = JWTManager(app)
-CORS(app)  # permite o frontend (rodando em outra porta/arquivo) chamar essa API
+# TODO: restringir as origins depois de saber a URL do frontend na Vercel,
+# ex.: CORS(app, origins=["https://meu-frontend.vercel.app"])
+CORS(app)  # por enquanto genérico; permite o frontend (rodando em outra porta/arquivo) chamar essa API
 
 with app.app_context():
     db.create_all()
@@ -277,4 +279,5 @@ def remover_agendamento(agendamento_id):
 
 if __name__ == "__main__":
     debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-    app.run(debug=debug, port=5001)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(debug=debug, host="0.0.0.0", port=port)
