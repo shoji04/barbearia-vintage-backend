@@ -62,6 +62,19 @@ class Agendamento(db.Model):
 
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
 
+    __table_args__ = (
+        # Garante no banco (não só na aplicação) que não existam dois
+        # agendamentos ativos no mesmo horário, evitando corrida entre
+        # requisições concorrentes.
+        db.Index(
+            "ix_agendamento_data_horario_ativo",
+            "data",
+            "horario",
+            unique=True,
+            sqlite_where=db.text("status != 'cancelado'"),
+        ),
+    )
+
     def to_dict(self):
         return {
             "id": self.id,
