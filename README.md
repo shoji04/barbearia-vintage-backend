@@ -6,6 +6,20 @@ com disparo automático de webhook (n8n) para envio de e-mail de confirmação
 a cada novo agendamento.
 
 **Deploy:** https://barbearia-vintage-backend.onrender.com
+**Repositório do frontend:** https://github.com/shoji04/barbearia-vintage-frontend
+
+## Contexto do case
+
+A Barbearia Vintage é uma barbearia de bairro que controlava os agendamentos
+manualmente num caderno físico. Esse processo causava horários duplicados,
+esquecimentos e falta de visibilidade sobre quantos atendimentos eram feitos
+e quais serviços mais procurados.
+
+O sistema resolve esse problema com uma plataforma web de acesso restrito a
+funcionários, com cadastro de clientes, agendamentos organizados por data e
+horário, controle de status (agendado, concluído, cancelado, não
+compareceu) e uma automação em n8n que envia e-mail de confirmação ao
+cliente a cada novo agendamento.
 
 ## Tecnologias
 
