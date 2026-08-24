@@ -15,7 +15,7 @@ from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity
 )
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.exc import IntegrityError
 
 from database import db, Cliente, Agendamento, Funcionario
@@ -27,6 +27,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///barbearia.db"
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "troque-essa-chave-no-env")
 
 N8N_WEBHOOK_URL = os.environ.get("N8N_WEBHOOK_URL", "http://localhost:5678/webhook/novo-agendamento")
+CODIGO_FUNCIONARIO = os.environ.get("CODIGO_FUNCIONARIO", "barbearia300")
 
 db.init_app(app)
 jwt = JWTManager(app)
@@ -54,6 +55,41 @@ def login():
 
     token = create_access_token(identity=str(funcionario.id))
     return jsonify({"token": token, "nome": funcionario.nome}), 200
+
+
+@app.route("/register", methods=["POST"])
+def register():
+    dados = request.get_json(silent=True)
+    if not dados:
+        return jsonify({"erro": "Corpo da requisição deve ser um JSON válido"}), 400
+
+    nome = dados.get("nome")
+    email = dados.get("email")
+    senha = dados.get("senha")
+    codigo = dados.get("codigo")
+
+    if not nome or not email or not senha or not codigo:
+        return jsonify({"erro": "nome, email, senha e codigo são obrigatórios"}), 400
+
+    if codigo != CODIGO_FUNCIONARIO:
+        return jsonify({"erro": "Código de funcionário inválido"}), 403
+
+    if Funcionario.query.filter_by(email=email).first():
+        return jsonify({"erro": "Email já cadastrado"}), 409
+
+    funcionario = Funcionario(
+        nome=nome,
+        email=email,
+        senha_hash=generate_password_hash(senha),
+    )
+    db.session.add(funcionario)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"erro": "Email já cadastrado"}), 409
+
+    return jsonify({"id": funcionario.id, "nome": funcionario.nome, "email": funcionario.email}), 201
 
 
 # ==================== CLIENTES (CRUD) ====================
