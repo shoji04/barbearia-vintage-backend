@@ -85,3 +85,20 @@ Todas as rotas retornam JSON. Rotas marcadas com 🔒 exigem o header
 Variáveis adicionais opcionais: `PORT` (porta do servidor, definida
 automaticamente pelo Render) e `FLASK_DEBUG` (ativa o modo debug do Flask
 em desenvolvimento).
+
+## Limitação conhecida: envio de e-mail
+
+O envio do e-mail de confirmação é feito pelo workflow do n8n (hospedado no
+Railway) chamando a API do [Resend](https://resend.com/), e não via SMTP —
+o plano gratuito do Railway bloqueia portas SMTP como 465/587.
+
+No plano gratuito do Resend, o remetente de teste (`onboarding@resend.dev`)
+só entrega e-mails para o endereço cadastrado na conta Resend usada no
+projeto, não para qualquer destinatário.
+
+Essa é uma limitação do plano gratuito do serviço de e-mail, não um bug da
+aplicação: para enviar a qualquer destinatário seria necessário verificar
+um domínio próprio no Resend.
+
+Por isso, para testar o fluxo completo, o e-mail do cliente cadastrado deve
+ser o mesmo e-mail usado na conta Resend do projeto.
