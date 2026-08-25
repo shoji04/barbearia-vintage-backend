@@ -45,6 +45,13 @@ with app.app_context():
     db.create_all()
 
 
+# ==================== HEALTH CHECK ====================
+
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"}), 200
+
+
 # ==================== LOGIN ====================
 
 @app.route("/login", methods=["POST"])
